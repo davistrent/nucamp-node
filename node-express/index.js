@@ -2,6 +2,7 @@ const express = require('express');
 const http = require('http');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const dishRouter = require('./routes/dishRouter');
 
 const HOST_NAME = 'localhost';
 const PORT = 3000;
@@ -12,30 +13,7 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 
 app.use(express.static(`${__dirname}/public`));
-
-app.all('/dishes', (req, res, next) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'text/plain');
-
-    next();
-});
-
-app.get('/dishes', (req, res, next) => {
-    res.end('Will send all the dishes to you!');
-});
-
-app.post('/dishes', (req, res, next) => {
-    res.end(`Will add the dish: ${req.body.name} with details: ${req.body.description}`);
-});
-
-app.put('/dishes', (req, res, next) => {
-    res.statusCode = 403;
-    res.end(`${req.method} operation not supported on ${req.path}`);
-});
-
-app.delete('/dishes', (req, res, next) => {
-    res.end('Deleting all dishes');
-});
+app.use('/dishes', dishRouter);
 
 app.get('/dishes/:dishId', (req, res, next) => {
     res.end(`Will send details of the dish: ${req.params.dishId} to you!`);
@@ -43,7 +21,7 @@ app.get('/dishes/:dishId', (req, res, next) => {
 
 app.post('/dishes/:dishId', (req, res, next) => {
     res.statusCode = 403;
-    res.end(`${req.method} operation not supported on ${req.path}/${req.params.dishId}`);
+    res.end(`${req.method} operation not supported on ${req.path}`);
 });
 
 app.put('/dishes/:dishId', (req, res, next) => {
